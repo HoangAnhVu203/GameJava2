@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Basketball">
+
+    <com.example.game43.GameBasketball.BasketballGameView
+        android:id="@+id/basketballGame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:visibility="gone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/basketDesignPreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/previewBackground"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop"
+            android:src="@drawable/basketball_court_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/previewBackboard"
+            android:layout_width="47dp"
+            android:layout_height="162dp"
+            android:layout_marginTop="152dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/basketball_backboard"
+            android:translationX="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/previewHoopBackLayer"
+            android:layout_width="84dp"
+            android:layout_height="23dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/basketball_hoop_back_layer"
+            android:translationX="32dp"
+            app:layout_constraintEnd_toStartOf="@id/previewBackboard"
+            app:layout_constraintTop_toTopOf="@id/previewBackboard"
+            android:layout_marginTop="56dp" />
+
+        <ImageView
+            android:id="@+id/previewBall"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/basketball_ball"
+            app:layout_constraintBottom_toBottomOf="@id/previewHoopFrontLayer"
+            app:layout_constraintEnd_toEndOf="@id/previewHoopFrontLayer"
+            app:layout_constraintStart_toStartOf="@id/previewHoopFrontLayer"
+            app:layout_constraintTop_toTopOf="@id/previewHoopFrontLayer" />
+
+        <ImageView
+            android:id="@+id/previewHoopFrontLayer"
+            android:layout_width="72dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="-12dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/basketball_hoop_front_layer"
+            android:translationX="32dp"
+            app:layout_constraintEnd_toEndOf="@id/previewHoopBackLayer"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/previewHoopBackLayer"
+            app:layout_constraintTop_toBottomOf="@id/previewHoopBackLayer" />
+
+        <View
+            android:id="@+id/previewRimCollider"
+            android:layout_width="6dp"
+            android:layout_height="9dp"
+            android:layout_marginTop="7dp"
+            android:background="#AA00E676"
+            android:translationX="-4dp"
+            app:layout_constraintStart_toStartOf="@id/previewHoopBackLayer"
+            app:layout_constraintTop_toTopOf="@id/previewHoopBackLayer" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
