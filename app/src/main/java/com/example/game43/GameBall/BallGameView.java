@@ -32,7 +32,8 @@ public class BallGameView extends View {
 
     private Bitmap backgroundBitmap;
     private Bitmap addBallButtonBitmap;
-    private Bitmap[] bucketBitmaps;
+    private Bitmap[] bucketBackBitmaps;
+    private Bitmap[] bucketFrontBitmaps;
     private Bitmap[] pegBitmaps;
     private Bitmap ballBitmap;
 
@@ -73,12 +74,19 @@ public class BallGameView extends View {
                 BitmapFactory.decodeResource(getResources(), R.drawable.hong),
                 BitmapFactory.decodeResource(getResources(), R.drawable.peg_yellow)
         };
-        bucketBitmaps = new Bitmap[] {
-                BitmapFactory.decodeResource(getResources(), R.drawable.chau1),
-                BitmapFactory.decodeResource(getResources(), R.drawable.chau2),
-                BitmapFactory.decodeResource(getResources(), R.drawable.chau3),
-                BitmapFactory.decodeResource(getResources(), R.drawable.chau4),
-                BitmapFactory.decodeResource(getResources(), R.drawable.chau5)
+        bucketBackBitmaps = new Bitmap[] {
+                BitmapFactory.decodeResource(getResources(), R.drawable.vangduoi),
+                BitmapFactory.decodeResource(getResources(), R.drawable.xanhduoi),
+                BitmapFactory.decodeResource(getResources(), R.drawable.duoi),
+                BitmapFactory.decodeResource(getResources(), R.drawable.xanhhduoi),
+                BitmapFactory.decodeResource(getResources(), R.drawable.vangduoi)
+        };
+        bucketFrontBitmaps = new Bitmap[] {
+                BitmapFactory.decodeResource(getResources(), R.drawable.vangtren),
+                BitmapFactory.decodeResource(getResources(), R.drawable.xanhtren),
+                BitmapFactory.decodeResource(getResources(), R.drawable.tren),
+                BitmapFactory.decodeResource(getResources(), R.drawable.xanh_tren),
+                BitmapFactory.decodeResource(getResources(), R.drawable.vangtren)
         };
 
         textPaint.setColor(Color.WHITE);
@@ -245,7 +253,8 @@ public class BallGameView extends View {
         }
 
         for (RectF bucketRect : bucketRects) {
-            if (bucketRect.contains(ball.x, ball.y)) {
+            if (ball.x >= bucketRect.left && ball.x <= bucketRect.right
+                    && ball.y >= bucketRect.top + bucketRect.height() * 0.52f) {
                 return true;
             }
         }
@@ -256,8 +265,9 @@ public class BallGameView extends View {
         drawBackground(canvas);
         drawButton(canvas);
         drawPegs(canvas);
+        drawBucketBacks(canvas);
         drawBalls(canvas);
-        drawBuckets(canvas);
+        drawBucketFronts(canvas);
     }
 
     private void drawBackground(Canvas canvas) {
@@ -311,11 +321,23 @@ public class BallGameView extends View {
         }
     }
 
-    private void drawBuckets(Canvas canvas) {
+    private void drawBucketBacks(Canvas canvas) {
         for (int i = 0; i < bucketRects.length; i++) {
-            Bitmap bucketBitmap = bucketBitmaps[i];
+            Bitmap bucketBitmap = bucketBackBitmaps[i];
             if (bucketBitmap != null) {
                 canvas.drawBitmap(bucketBitmap, null, bucketRects[i], bitmapPaint);
+            }
+        }
+    }
+
+    private void drawBucketFronts(Canvas canvas) {
+        for (int i = 0; i < bucketRects.length; i++) {
+            Bitmap bucketBitmap = bucketFrontBitmaps[i];
+            if (bucketBitmap != null) {
+                float frontHeight = bucketRects[i].width() * bucketBitmap.getHeight() / bucketBitmap.getWidth();
+                drawRect.set(bucketRects[i].left, bucketRects[i].bottom - frontHeight,
+                        bucketRects[i].right, bucketRects[i].bottom);
+                canvas.drawBitmap(bucketBitmap, null, drawRect, bitmapPaint);
             }
 
             float scoreSize = bucketRects[i].width() * 0.27f;
