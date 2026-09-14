@@ -22,11 +22,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Basketball"
+            android:name=".GameBasketball.Basketball"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".GameBall.Ball"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".TapeItUp.TapeItUp"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".SeaCatcher.SeaCatcher"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

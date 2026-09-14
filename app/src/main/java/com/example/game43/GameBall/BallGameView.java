@@ -16,6 +16,7 @@ import com.example.game43.R;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 public class BallGameView extends View {
     private static final int[] BUCKET_SCORES = {100, 200, 500, 200, 100};
@@ -24,11 +25,14 @@ public class BallGameView extends View {
     private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint textShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint ballCounterPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint pegHitRingPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF drawRect = new RectF();
     private final RectF addBallButtonRect = new RectF();
     private final List<Peg> pegs = new ArrayList<>();
     private final List<DropBall> balls = new ArrayList<>();
+    private final List<PegHitRing> pegHitRings = new ArrayList<>();
     private final RectF[] bucketRects = new RectF[5];
+    private final Random random = new Random();
 
     private Bitmap backgroundBitmap;
     private Bitmap addBallButtonBitmap;
@@ -98,6 +102,10 @@ public class BallGameView extends View {
         textShadowPaint.setFakeBoldText(true);
 
         ballCounterPaint.setColor(Color.argb(180, 11, 13, 33));
+
+        pegHitRingPaint.setStyle(Paint.Style.STROKE);
+        pegHitRingPaint.setStrokeCap(Paint.Cap.ROUND);
+        pegHitRingPaint.setColor(Color.WHITE);
     }
 
     @Override
@@ -113,6 +121,7 @@ public class BallGameView extends View {
         ballRadius = minSide * 0.023f;
         balls.clear();
         pegs.clear();
+        pegHitRings.clear();
         totalDroppedBalls = 0;
 
         configureButton();
@@ -128,10 +137,10 @@ public class BallGameView extends View {
     }
 
     private void configureBuckets() {
-        float gap = minSide * 0.012f;
+        float gap = minSide * 0.003f;
         float bucketWidth = (viewWidth - gap * 6f) / 5f;
         float bucketHeight = bucketWidth * 174f / 187f;
-        float bottom = viewHeight - minSide * 0.02f;
+        float bottom = viewHeight - minSide * 0.02f - dp(50f);
         for (int i = 0; i < bucketRects.length; i++) {
             float left = gap + i * (bucketWidth + gap);
             bucketRects[i] = new RectF(left, bottom - bucketHeight, left + bucketWidth, bottom);
@@ -191,6 +200,8 @@ public class BallGameView extends View {
     }
 
     private void updateGame(float dt) {
+        updatePegHitRings(dt);
+
         Iterator<DropBall> iterator = balls.iterator();
         while (iterator.hasNext()) {
             DropBall ball = iterator.next();
@@ -201,14 +212,6 @@ public class BallGameView extends View {
             ball.vy += gravity() * dt;
             ball.x += ball.vx * dt;
             ball.y += ball.vy * dt;
-
-            if (ball.x - ball.radius < 0f) {
-                ball.x = ball.radius;
-                ball.vx = Math.abs(ball.vx) * 0.72f;
-            } else if (ball.x + ball.radius > viewWidth) {
-                ball.x = viewWidth - ball.radius;
-                ball.vx = -Math.abs(ball.vx) * 0.72f;
-            }
 
             resolvePegCollisions(ball);
             if (resolveBucket(ball)) {
@@ -241,13 +244,40 @@ public class BallGameView extends View {
                 ball.vy -= (1f + bounce) * velocityAlongNormal * normalY;
             }
 
-            float slideDirection = normalX == 0f ? (ball.x >= peg.x ? 1f : -1f) : Math.signum(normalX);
-            ball.vx += slideDirection * minSide * 0.18f;
+            float slideDirection;
+            if (Math.abs(normalX) < 0.18f) {
+                slideDirection = random.nextBoolean() ? 1f : -1f;
+            } else {
+                slideDirection = Math.signum(normalX);
+            }
+            ball.vx += slideDirection * randomBetween(minSide * 0.025f, minSide * 0.07f);
+            ball.vx += randomBetween(-minSide * 0.025f, minSide * 0.025f);
+            ball.vx = clamp(ball.vx, -minSide * 0.32f, minSide * 0.32f);
             ball.vy = Math.min(ball.vy, -minSide * 0.045f);
+            addPegHitRing(peg);
         }
     }
 
+    private void updatePegHitRings(float dt) {
+        Iterator<PegHitRing> iterator = pegHitRings.iterator();
+        while (iterator.hasNext()) {
+            PegHitRing ring = iterator.next();
+            ring.age += dt;
+            if (ring.age >= ring.duration) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private void addPegHitRing(Peg peg) {
+        pegHitRings.add(new PegHitRing(peg.x, peg.y, peg.radius * 1.45f));
+    }
+
     private boolean resolveBucket(DropBall ball) {
+        if (ball.x + ball.radius < 0f || ball.x - ball.radius > viewWidth) {
+            return true;
+        }
+
         if (ball.y - ball.radius < bucketRects[0].top) {
             return false;
         }
@@ -265,6 +295,7 @@ public class BallGameView extends View {
         drawBackground(canvas);
         drawButton(canvas);
         drawPegs(canvas);
+        drawPegHitRings(canvas);
         drawBucketBacks(canvas);
         drawBalls(canvas);
         drawBucketFronts(canvas);
@@ -314,6 +345,17 @@ public class BallGameView extends View {
         }
     }
 
+    private void drawPegHitRings(Canvas canvas) {
+        pegHitRingPaint.setStrokeWidth(Math.max(dp(1f), ballRadius * 0.12f));
+        for (PegHitRing ring : pegHitRings) {
+            float progress = ring.age / ring.duration;
+            int alpha = (int) (220f * (1f - progress));
+            pegHitRingPaint.setAlpha(Math.max(0, alpha));
+            canvas.drawCircle(ring.x, ring.y, ring.radius + ballRadius * 0.25f * progress, pegHitRingPaint);
+        }
+        pegHitRingPaint.setAlpha(255);
+    }
+
     private void drawBalls(Canvas canvas) {
         for (DropBall ball : balls) {
             drawRect.set(ball.x - ball.radius, ball.y - ball.radius, ball.x + ball.radius, ball.y + ball.radius);
@@ -344,7 +386,7 @@ public class BallGameView extends View {
             textPaint.setTextSize(scoreSize);
             textShadowPaint.setTextSize(scoreSize);
             String scoreText = String.valueOf(BUCKET_SCORES[i]);
-            float y = bucketRects[i].top + bucketRects[i].height() * 0.58f;
+            float y = bucketRects[i].top + bucketRects[i].height() * 0.7f;
             canvas.drawText(scoreText, bucketRects[i].centerX() + dp(1.2f), y + dp(1.2f), textShadowPaint);
             canvas.drawText(scoreText, bucketRects[i].centerX(), y, textPaint);
         }
@@ -372,7 +414,7 @@ public class BallGameView extends View {
             float dy = touchY - ball.y;
             if (dx * dx + dy * dy <= ball.radius * ball.radius * 3f) {
                 ball.falling = true;
-                ball.vx = 0f;
+                ball.vx = randomBetween(-minSide * 0.035f, minSide * 0.035f);
                 ball.vy = minSide * 0.08f;
                 totalDroppedBalls++;
                 return true;
@@ -383,7 +425,11 @@ public class BallGameView extends View {
     }
 
     private void addWaitingBall() {
-        float x = viewWidth * 0.5f;
+        if (!balls.isEmpty()) {
+            return;
+        }
+
+        float x = viewWidth * 0.5f + randomBetween(-ballRadius * 0.35f, ballRadius * 0.35f);
         float y = addBallButtonRect.bottom + ballRadius * 2.2f;
         balls.add(new DropBall(x, y, ballRadius, ballBitmap));
     }
@@ -394,6 +440,14 @@ public class BallGameView extends View {
 
     private float dp(float value) {
         return value * getResources().getDisplayMetrics().density;
+    }
+
+    private float randomBetween(float min, float max) {
+        return min + random.nextFloat() * (max - min);
+    }
+
+    private float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
     }
 
     private static final class Peg {
@@ -424,6 +478,20 @@ public class BallGameView extends View {
             this.y = y;
             this.radius = radius;
             this.bitmap = bitmap;
+        }
+    }
+
+    private static final class PegHitRing {
+        final float x;
+        final float y;
+        final float radius;
+        final float duration = 0.12f;
+        float age;
+
+        PegHitRing(float x, float y, float radius) {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
         }
     }
 }
