@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BallBlast.BallBlast">
+
+    <com.example.game43.BallBlast.BallBlastGameView
+        android:id="@+id/ballBlastGame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/ballBlastGameOverOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#84000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <FrameLayout
+            android:id="@+id/ballBlastGameOverPopup"
+            android:layout_width="225dp"
+            android:layout_height="261dp"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/ballBlastGameOverPopupImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/popup" />
+
+            <TextView
+                android:id="@+id/ballBlastGameOverTitle"
+                android:layout_width="168dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="93dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Bạn có muốn\nchơi lại không?"
+                android:textColor="#424242"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:id="@+id/ballBlastPlayAgainButton"
+                android:layout_width="77dp"
+                android:layout_height="36dp"
+                android:layout_gravity="top|start"
+                android:layout_marginStart="33dp"
+                android:layout_marginTop="170dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/ballBlastPlayAgainButtonImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/button_popup1" />
+
+                <TextView
+                    android:id="@+id/ballBlastPlayAgainButtonText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="Có"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/ballBlastQuitButton"
+                android:layout_width="77dp"
+                android:layout_height="36dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="170dp"
+                android:layout_marginEnd="33dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/ballBlastQuitButtonImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/button_popup2" />
+
+                <TextView
+                    android:id="@+id/ballBlastQuitButtonText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="Không"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+        </FrameLayout>
+    </FrameLayout>
+
+</FrameLayout>

@@ -5,10 +5,13 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.game43.BallBlast.BallBlast;
 import com.example.game43.GameBall.Ball;
 import com.example.game43.GameBasketball.Basketball;
 import com.example.game43.SeaCatcher.SeaCatcher;
+import com.example.game43.SupertBallFall.SuperBallFall;
 import com.example.game43.TapeItUp.TapeItUp;
+import com.example.game43.TinyFishing.TinyFishing;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,5 +28,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, TapeItUp.class)));
         findViewById(R.id.seaCatcherButton).setOnClickListener(v ->
                 startActivity(new Intent(this, SeaCatcher.class)));
+        findViewById(R.id.ballBlastButton).setOnClickListener(v ->
+                startActivity(new Intent(this, BallBlast.class)));
+        findViewById(R.id.superBallFallButton).setOnClickListener(v ->
+                startActivity(new Intent(this, SuperBallFall.class)));
+        findViewById(R.id.tinyFishingButton).setOnClickListener(v ->
+                startActivity(new Intent(this, TinyFishing.class)));
     }
 }

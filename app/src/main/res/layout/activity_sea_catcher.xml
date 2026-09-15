@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -9,8 +10,127 @@
     <com.example.game43.SeaCatcher.SeaCatcherGameView
         android:id="@+id/seaCatcherGame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:layout_height="match_parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/seaTimerOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <FrameLayout
+            android:id="@+id/seaTimerBar"
+            android:layout_width="183dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="57dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <FrameLayout
+                android:id="@+id/seaTimerTrack"
+                android:layout_width="150dp"
+                android:layout_height="32dp"
+                android:layout_gravity="end|center_vertical"
+                android:background="@drawable/sea_timer_track"
+                android:paddingStart="6dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="6dp">
+
+                <View
+                    android:id="@+id/seaTimerFill"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start|center_vertical"
+                    android:background="@drawable/sea_timer_fill" />
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/seaTimerWarningIcon"
+                android:layout_width="51dp"
+                android:layout_height="54dp"
+                android:layout_gravity="start|center_vertical"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                android:src="@drawable/warning_icon" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/seaAddTimeButton"
+            android:layout_width="78dp"
+            android:layout_height="78dp"
+            android:layout_marginStart="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintStart_toEndOf="@id/seaTimerBar"
+            app:layout_constraintTop_toTopOf="@id/seaTimerBar">
+
+            <ImageView
+                android:id="@+id/seaAddTimeButtonBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                android:src="@drawable/button23" />
+
+            <TextView
+                android:id="@+id/seaAddTimeText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:shadowColor="#884B3600"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="0"
+                android:text="+30s"
+                android:textColor="@android:color/white"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/seaMoneyPanel"
+            android:layout_width="142dp"
+            android:layout_height="54dp"
+            android:layout_marginTop="57dp"
+            android:layout_marginEnd="7dp"
+            android:background="@drawable/sea_money_panel_background"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingStart="10dp"
+            android:paddingEnd="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/seaMoneyIcon"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="start|center_vertical"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                android:src="@drawable/tape_coin_icon" />
+
+            <TextView
+                android:id="@+id/seaMoneyText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="48dp"
+                android:gravity="center_vertical|end"
+                android:shadowColor="#884B3600"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="0"
+                android:text="0"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

@@ -1,0 +1,62 @@
+
+animn character.png
+size: 334,289
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+action2
+  rotate: false
+  xy: 2, 142
+  size: 180, 145
+  orig: 294, 211
+  offset: 46, 42
+  index: -1
+chanphai
+  rotate: false
+  xy: 265, 50
+  size: 66, 59
+  orig: 67, 61
+  offset: 0, 1
+  index: -1
+chantrai
+  rotate: false
+  xy: 265, 2
+  size: 65, 46
+  orig: 68, 48
+  offset: 1, 2
+  index: -1
+tayphai
+  rotate: false
+  xy: 95, 4
+  size: 83, 74
+  orig: 84, 74
+  offset: 0, 0
+  index: -1
+tayphai2
+  rotate: true
+  xy: 2, 6
+  size: 72, 91
+  orig: 73, 92
+  offset: 0, 0
+  index: -1
+taytrai
+  rotate: false
+  xy: 180, 40
+  size: 83, 69
+  orig: 84, 69
+  offset: 0, 0
+  index: -1
+taytrai2
+  rotate: false
+  xy: 2, 80
+  size: 146, 60
+  orig: 149, 61
+  offset: 2, 0
+  index: -1
+than
+  rotate: true
+  xy: 184, 111
+  size: 176, 148
+  orig: 178, 155
+  offset: 1, 0
+  index: -1

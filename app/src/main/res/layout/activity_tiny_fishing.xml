@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TinyFishing.TinyFishing">
+
+    <com.example.game43.TinyFishing.TinyFishingGameView
+        android:id="@+id/tinyFishingGame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/tinyFishingMoneyPanel"
+        android:layout_width="142dp"
+        android:layout_height="54dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="57dp"
+        android:layout_marginEnd="7dp"
+        android:background="@drawable/sea_money_panel_background"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingStart="10dp"
+        android:paddingEnd="14dp">
+
+        <ImageView
+            android:id="@+id/tinyFishingMoneyIcon"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="start|center_vertical"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:src="@drawable/tape_coin_icon" />
+
+        <TextView
+            android:id="@+id/tinyFishingMoneyText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="48dp"
+            android:gravity="center_vertical|end"
+            android:shadowColor="#884B3600"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="0"
+            android:text="0"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+</FrameLayout>

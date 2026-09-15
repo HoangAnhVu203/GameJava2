@@ -1,0 +1,39 @@
+package com.example.game43.SupertBallFall;
+
+import android.os.Bundle;
+import android.view.View;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.example.game43.R;
+
+public class SuperBallFall extends AppCompatActivity {
+    private SuperBallFallGameView gameView;
+    private View gameOverOverlay;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_super_ball_fall);
+
+        gameView = findViewById(R.id.superBallFallGame);
+        gameOverOverlay = findViewById(R.id.superBallFallGameOverOverlay);
+        gameView.setGameOverListener(() -> gameOverOverlay.setVisibility(View.VISIBLE));
+        findViewById(R.id.superBallFallPlayAgainButton).setOnClickListener(v -> {
+            gameOverOverlay.setVisibility(View.GONE);
+            gameView.resetGame();
+        });
+        findViewById(R.id.superBallFallQuitButton).setOnClickListener(v -> finish());
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+    }
+}
