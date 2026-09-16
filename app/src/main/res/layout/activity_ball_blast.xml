@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -11,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ballBlastGameOverOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,42 +22,65 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ballBlastGameOverPopup"
-            android:layout_width="225dp"
-            android:layout_height="261dp"
-            android:layout_gravity="center">
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="225:261"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="320dp"
+            app:layout_constraintWidth_percent="0.58">
 
             <ImageView
                 android:id="@+id/ballBlastGameOverPopupImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:contentDescription="@null"
                 android:scaleType="fitXY"
-                android:src="@drawable/popup" />
+                android:src="@drawable/popup"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/ballBlastGameOverTitle"
-                android:layout_width="168dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|center_horizontal"
-                android:layout_marginTop="93dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="Bạn có muốn\nchơi lại không?"
                 android:textColor="#424242"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="16sp"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toTopOf="@id/ballBlastPlayAgainButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.22"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.9"
+                app:layout_constraintWidth_percent="0.75" />
 
             <FrameLayout
                 android:id="@+id/ballBlastPlayAgainButton"
-                android:layout_width="77dp"
-                android:layout_height="36dp"
-                android:layout_gravity="top|start"
-                android:layout_marginStart="33dp"
-                android:layout_marginTop="170dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/ballBlastQuitButton"
+                app:layout_constraintHeight_percent="0.14"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.72"
+                app:layout_constraintWidth_percent="0.34">
 
                 <ImageView
                     android:id="@+id/ballBlastPlayAgainButtonImage"
@@ -74,19 +98,25 @@
                     android:includeFontPadding="false"
                     android:text="Có"
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="7sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform" />
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/ballBlastQuitButton"
-                android:layout_width="77dp"
-                android:layout_height="36dp"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="170dp"
-                android:layout_marginEnd="33dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="@id/ballBlastPlayAgainButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.14"
+                app:layout_constraintStart_toEndOf="@id/ballBlastPlayAgainButton"
+                app:layout_constraintTop_toTopOf="@id/ballBlastPlayAgainButton"
+                app:layout_constraintWidth_percent="0.34">
 
                 <ImageView
                     android:id="@+id/ballBlastQuitButtonImage"
@@ -104,10 +134,13 @@
                     android:includeFontPadding="false"
                     android:text="Không"
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="7sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform" />
             </FrameLayout>
-        </FrameLayout>
-    </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

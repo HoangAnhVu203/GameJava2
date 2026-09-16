@@ -49,6 +49,10 @@
             android:name=".TinyFishing.TinyFishing"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".FlipperDrunk.FlipperDrunk"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

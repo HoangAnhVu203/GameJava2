@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.game43.BallBlast.BallBlast;
+import com.example.game43.FlipperDrunk.FlipperDrunk;
 import com.example.game43.GameBall.Ball;
 import com.example.game43.GameBasketball.Basketball;
 import com.example.game43.SeaCatcher.SeaCatcher;
@@ -34,5 +35,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, SuperBallFall.class)));
         findViewById(R.id.tinyFishingButton).setOnClickListener(v ->
                 startActivity(new Intent(this, TinyFishing.class)));
+        findViewById(R.id.flipperDrunkButton).setOnClickListener(v ->
+                startActivity(new Intent(this, FlipperDrunk.class)));
     }
 }

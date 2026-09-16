@@ -1,6 +1,7 @@
 package com.example.game43.GameBasketball;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,16 @@ public class Basketball extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_basketball);
+
+        BasketballGameView gameView = findViewById(R.id.basketballGame);
+        View rewardOverlay = findViewById(R.id.basketballRewardOverlay);
+        gameView.setExtraTimeRequestListener(() -> rewardOverlay.setVisibility(View.VISIBLE));
+        findViewById(R.id.basketballRewardYesButton).setOnClickListener(v -> {
+            rewardOverlay.setVisibility(View.GONE);
+            gameView.grantExtraTime();
+        });
+        findViewById(R.id.basketballRewardNoButton).setOnClickListener(v -> rewardOverlay.setVisibility(View.GONE));
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

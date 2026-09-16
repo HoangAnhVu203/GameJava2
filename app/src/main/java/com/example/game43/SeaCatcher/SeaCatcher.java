@@ -20,11 +20,17 @@ public class SeaCatcher extends AppCompatActivity {
         SeaCatcherGameView gameView = findViewById(R.id.seaCatcherGame);
         View timerFill = findViewById(R.id.seaTimerFill);
         View addTimeButton = findViewById(R.id.seaAddTimeButton);
+        View rewardOverlay = findViewById(R.id.seaRewardOverlay);
         TextView moneyText = findViewById(R.id.seaMoneyText);
 
         timerFill.setPivotX(0f);
         gameView.setTimerStateListener(fillFraction -> timerFill.setScaleX(fillFraction));
         gameView.setMoneyStateListener(money -> moneyText.setText(String.valueOf(money)));
-        addTimeButton.setOnClickListener(view -> gameView.refillTimer());
+        addTimeButton.setOnClickListener(view -> rewardOverlay.setVisibility(View.VISIBLE));
+        findViewById(R.id.seaRewardYesButton).setOnClickListener(view -> {
+            rewardOverlay.setVisibility(View.GONE);
+            gameView.refillTimer();
+        });
+        findViewById(R.id.seaRewardNoButton).setOnClickListener(view -> rewardOverlay.setVisibility(View.GONE));
     }
 }

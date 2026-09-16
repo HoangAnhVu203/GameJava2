@@ -47,6 +47,7 @@ public class BallGameView extends View {
     private float ballRadius;
     private long lastFrameNanos;
     private int totalDroppedBalls;
+    private AddBallRequestListener addBallRequestListener;
 
     public BallGameView(Context context) {
         super(context);
@@ -106,6 +107,15 @@ public class BallGameView extends View {
         pegHitRingPaint.setStyle(Paint.Style.STROKE);
         pegHitRingPaint.setStrokeCap(Paint.Cap.ROUND);
         pegHitRingPaint.setColor(Color.WHITE);
+    }
+
+    public void setAddBallRequestListener(AddBallRequestListener addBallRequestListener) {
+        this.addBallRequestListener = addBallRequestListener;
+    }
+
+    public void grantExtraBall() {
+        addWaitingBall();
+        invalidate();
     }
 
     @Override
@@ -401,7 +411,7 @@ public class BallGameView extends View {
         float touchX = event.getX();
         float touchY = event.getY();
         if (addBallButtonRect.contains(touchX, touchY)) {
-            addWaitingBall();
+            requestExtraBall();
             return true;
         }
 
@@ -432,6 +442,14 @@ public class BallGameView extends View {
         float x = viewWidth * 0.5f + randomBetween(-ballRadius * 0.35f, ballRadius * 0.35f);
         float y = addBallButtonRect.bottom + ballRadius * 2.2f;
         balls.add(new DropBall(x, y, ballRadius, ballBitmap));
+    }
+
+    private void requestExtraBall() {
+        if (addBallRequestListener != null) {
+            addBallRequestListener.onAddBallRequested();
+            return;
+        }
+        grantExtraBall();
     }
 
     private float gravity() {
@@ -493,5 +511,9 @@ public class BallGameView extends View {
             this.y = y;
             this.radius = radius;
         }
+    }
+
+    public interface AddBallRequestListener {
+        void onAddBallRequested();
     }
 }

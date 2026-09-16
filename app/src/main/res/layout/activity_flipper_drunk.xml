@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FlipperDrunk.FlipperDrunk">
+
+    <com.example.game43.FlipperDrunk.FlipperDrunkGameView
+        android:id="@+id/flipperDrunkGame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <FrameLayout
+            android:id="@+id/flipperStage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+        <ImageView
+            android:id="@+id/flipperBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/ui_07" />
+
+        <ImageView
+            android:id="@+id/flipperLeftWall"
+            android:layout_width="88dp"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/ui_06" />
+
+        <ImageView
+            android:id="@+id/flipperRightWall"
+            android:layout_width="96dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/ui_04" />
+
+        <ImageView
+            android:id="@+id/flipperHoopBack"
+            android:layout_width="96dp"
+            android:layout_height="26dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/basketball_hoop_back_layer" />
+
+        <ImageView
+            android:id="@+id/flipperBall"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/bong" />
+
+        <ImageView
+            android:id="@+id/flipperPaddle"
+            android:layout_width="148dp"
+            android:layout_height="86dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/ui_05" />
+
+        <ImageView
+            android:id="@+id/flipperHoopFront"
+            android:layout_width="82dp"
+            android:layout_height="68dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/basketball_hoop_front_layer" />
+
+        <TextView
+            android:id="@+id/flipperScore"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        </FrameLayout>
+    </com.example.game43.FlipperDrunk.FlipperDrunkGameView>
+
+</FrameLayout>

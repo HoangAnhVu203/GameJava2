@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -48,4 +49,135 @@
             android:textSize="24sp"
             android:textStyle="bold" />
     </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tinyFishingRewardOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#84000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tinyFishingRewardPopup"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="225:261"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="320dp"
+            app:layout_constraintWidth_percent="0.58">
+
+            <ImageView
+                android:id="@+id/tinyFishingRewardPopupImage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/popup"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tinyFishingRewardTitle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Bạn có muốn\nnhận 1 lượt câu\nhay không?"
+                android:textColor="#424242"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="16sp"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toTopOf="@id/tinyFishingRewardYesButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.26"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.82"
+                app:layout_constraintWidth_percent="0.75" />
+
+            <FrameLayout
+                android:id="@+id/tinyFishingRewardYesButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tinyFishingRewardNoButton"
+                app:layout_constraintHeight_percent="0.14"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.72"
+                app:layout_constraintWidth_percent="0.34">
+
+                <ImageView
+                    android:id="@+id/tinyFishingRewardYesButtonImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/button_popup1" />
+
+                <TextView
+                    android:id="@+id/tinyFishingRewardYesButtonText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="Có"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="7sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/tinyFishingRewardNoButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="@id/tinyFishingRewardYesButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.14"
+                app:layout_constraintStart_toEndOf="@id/tinyFishingRewardYesButton"
+                app:layout_constraintTop_toTopOf="@id/tinyFishingRewardYesButton"
+                app:layout_constraintWidth_percent="0.34">
+
+                <ImageView
+                    android:id="@+id/tinyFishingRewardNoButtonImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/button_popup2" />
+
+                <TextView
+                    android:id="@+id/tinyFishingRewardNoButtonText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="Không"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="7sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform" />
+            </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

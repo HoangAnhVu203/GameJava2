@@ -68,6 +68,7 @@ public class BasketballGameView extends View {
     private float trailSampleTimer;
     private float timeRemaining = ROUND_SECONDS;
     private long lastFrameNanos;
+    private ExtraTimeRequestListener extraTimeRequestListener;
     private int score;
     private boolean hasStarted;
     private boolean scoredCurrentHoop;
@@ -118,6 +119,15 @@ public class BasketballGameView extends View {
         resetTextShadowPaint.setColor(Color.argb(120, 95, 45, 0));
         resetTextShadowPaint.setTextAlign(Paint.Align.CENTER);
         resetTextShadowPaint.setFakeBoldText(true);
+    }
+
+    public void setExtraTimeRequestListener(ExtraTimeRequestListener extraTimeRequestListener) {
+        this.extraTimeRequestListener = extraTimeRequestListener;
+    }
+
+    public void grantExtraTime() {
+        resetPlayTimer();
+        invalidate();
     }
 
     @Override
@@ -420,8 +430,7 @@ public class BasketballGameView extends View {
         }
 
         if (resetButtonRect.contains(event.getX(), event.getY())) {
-            resetPlayTimer();
-            invalidate();
+            requestExtraTime();
             return true;
         }
 
@@ -435,6 +444,14 @@ public class BasketballGameView extends View {
 
     private void resetPlayTimer() {
         timeRemaining = ROUND_SECONDS;
+    }
+
+    private void requestExtraTime() {
+        if (extraTimeRequestListener != null) {
+            extraTimeRequestListener.onExtraTimeRequested();
+            return;
+        }
+        grantExtraTime();
     }
 
     private void jumpBall() {
@@ -712,5 +729,9 @@ public class BasketballGameView extends View {
             this.x = x;
             this.y = y;
         }
+    }
+
+    public interface ExtraTimeRequestListener {
+        void onExtraTimeRequested();
     }
 }
