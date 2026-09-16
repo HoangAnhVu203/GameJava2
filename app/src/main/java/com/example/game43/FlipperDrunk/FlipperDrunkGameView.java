@@ -1,7 +1,11 @@
 package com.example.game43.FlipperDrunk;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -17,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 public class FlipperDrunkGameView extends FrameLayout {
+    private static final boolean SHOW_COLLIDER_DEBUG = false;
     private static final int HOOPS_PER_TURN = 3;
     private static final float FLIP_SECONDS = 0.18f;
     private static final float FLIP_RETURN_SECONDS = 0.22f;
@@ -26,9 +31,26 @@ public class FlipperDrunkGameView extends FrameLayout {
     private static final float LEFT_WALL_ASPECT = 88f / 2243f;
     private static final float FLIPPER_ASPECT = 584f / 339f;
     private static final float FLIPPER_SCALE = 0.75f;
+    private static final float FLIPPER_MIN_LAUNCH_ANGLE = 42f;
+    private static final float FLIPPER_MAX_LAUNCH_ANGLE = 72f;
+    private static final float FLIPPER_LAUNCH_SPEED = 1.3f;
+    private static final float FLIPPER_SURFACE_HEIGHT_RATIO = 0.35f;
+    private static final float FLIPPER_PIVOT_DOWN = 5f;
+    private static final float RIGHT_HOOP_OFFSET = 7f;
+    private static final float RIGHT_WALL_RAMP_START_Y = 0.685f;
+    private static final float RIGHT_WALL_RAMP_SMOOTH_EXIT = 0.24f;
+    private static final float RIGHT_WALL_RAMP_ENTRY_SLOPE_DEGREES = 10f;
+    private static final float RIGHT_WALL_RAMP_LEAD_IN_WIDTH = 0.01f;
+    private static final float HOOP_RIM_COLLIDER_OFFSET = 25f;
+    private static final float WALL_RESTITUTION = 0.28f;
+    private static final float WALL_BOUNCE_DAMPING = 0.86f;
+    private static final float RAMP_RESTITUTION = 0.12f;
+    private static final float RAMP_BOUNCE_DAMPING = 0.92f;
+    private static final int WALL_ALPHA_THRESHOLD = 32;
 
     private final List<Hoop> hoops = new ArrayList<>();
     private final Random random = new Random();
+    private final Paint colliderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private FrameLayout stageView;
     private ImageView backgroundView;
@@ -39,6 +61,7 @@ public class FlipperDrunkGameView extends FrameLayout {
     private ImageView ballView;
     private ImageView flipperView;
     private TextView scoreView;
+    private Bitmap rightWallBitmap;
 
     private float actualWidth;
     private float actualHeight;
@@ -62,6 +85,9 @@ public class FlipperDrunkGameView extends FrameLayout {
     private int score;
     private int scoredHoopsThisTurn;
     private boolean waitingForFirstTap = true;
+    private boolean gameOver;
+    private boolean flipperKickUsed;
+    private GameOverListener gameOverListener;
 
     public FlipperDrunkGameView(Context context) {
         super(context);
@@ -83,6 +109,7 @@ public class FlipperDrunkGameView extends FrameLayout {
         setWillNotDraw(false);
         setClipChildren(false);
         setClipToPadding(false);
+        rightWallBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ui_04);
     }
 
     @Override
@@ -123,15 +150,17 @@ public class FlipperDrunkGameView extends FrameLayout {
         resetGame();
     }
 
-    private void resetGame() {
+    public void resetGame() {
         if (viewWidth <= 0f || viewHeight <= 0f) {
             return;
         }
 
         score = 0;
         scoredHoopsThisTurn = 0;
+        gameOver = false;
         flipperSide = 1f;
         hoopSide = 1f;
+        flipperKickUsed = false;
         flipperAngle = getRestAngle();
         flipperTargetAngle = flipperAngle;
         spawnActiveHoop();
@@ -155,7 +184,7 @@ public class FlipperDrunkGameView extends FrameLayout {
         float t = 0.68f;
         float surfaceX = pivot[0] + segmentX * t;
         float surfaceY = pivot[1] + segmentY * t;
-        float lift = ballRadius + getFlipperThickness() * 0.22f;
+        float lift = getFlipperSurfaceLift();
         ballX = surfaceX + normalX * lift;
         ballY = surfaceY + normalY * lift;
         previousBallY = ballY;
@@ -178,6 +207,7 @@ public class FlipperDrunkGameView extends FrameLayout {
         updateGame(dt);
         layoutGameViews();
         super.dispatchDraw(canvas);
+        drawColliderDebug(canvas);
         postInvalidateOnAnimation();
     }
 
@@ -195,6 +225,9 @@ public class FlipperDrunkGameView extends FrameLayout {
         }
 
         updateFlipper(dt);
+        if (gameOver) {
+            return;
+        }
         if (waitingForFirstTap) {
             placeBallOnFlipper();
             return;
@@ -215,10 +248,8 @@ public class FlipperDrunkGameView extends FrameLayout {
         }
         checkScores();
 
-        if (ballY - ballRadius > gy(DESIGN_HEIGHT + DESIGN_WIDTH * 0.08f)
-                || ballX + ballRadius < -gx(DESIGN_WIDTH * 0.25f)
-                || ballX - ballRadius > viewWidth + gx(DESIGN_WIDTH * 0.25f)) {
-            placeBallOnFlipper();
+        if (ballY - ballRadius > viewHeight + gs(8f)) {
+            triggerGameOver();
         }
     }
 
@@ -227,6 +258,7 @@ public class FlipperDrunkGameView extends FrameLayout {
             flipperTimer = Math.max(0f, flipperTimer - dt);
             if (flipperTimer <= 0f) {
                 flipperTargetAngle = getRestAngle();
+                flipperKickUsed = false;
             }
         }
 
@@ -239,21 +271,14 @@ public class FlipperDrunkGameView extends FrameLayout {
     private void resolveWallCollisions() {
         resolveSideWallCollision(-1f);
         resolveSideWallCollision(1f);
-
-        float floorY = getFloorYAt(ballX);
-        if (ballY + ballRadius > floorY) {
-            ballY = floorY - ballRadius;
-            if (velocityY > gs(DESIGN_WIDTH * 0.18f)) {
-                velocityY = -velocityY * 0.34f;
-            } else {
-                velocityY = 0f;
-            }
-            velocityX *= 0.86f;
-        }
+        resolveRightWallRampCollision();
     }
 
     private void resolveSideWallCollision(float side) {
         if (ballY > viewHeight - getWallLift() + ballRadius * 0.4f) {
+            return;
+        }
+        if (side > 0f && isRightWallRampZone(ballY + ballRadius * 0.35f)) {
             return;
         }
 
@@ -281,22 +306,98 @@ public class FlipperDrunkGameView extends FrameLayout {
 
         float velocityAlongNormal = velocityX * normalX + velocityY * normalY;
         if (velocityAlongNormal < 0f) {
-            velocityX -= 1.72f * velocityAlongNormal * normalX;
-            velocityY -= 1.72f * velocityAlongNormal * normalY;
+            velocityX -= (1f + WALL_RESTITUTION) * velocityAlongNormal * normalX;
+            velocityY -= (1f + WALL_RESTITUTION) * velocityAlongNormal * normalY;
+            velocityX *= WALL_BOUNCE_DAMPING;
+            velocityY *= WALL_BOUNCE_DAMPING;
         }
+    }
+
+    private void resolveRightWallRampCollision() {
+        float surfaceY = getRightWallRampYAt(ballX);
+        if (surfaceY < 0f || ballY + ballRadius < surfaceY) {
+            return;
+        }
+
+        float sample = Math.max(gs(2f), ballRadius * 0.2f);
+        float leftY = getRightWallRampYAt(ballX - sample);
+        float rightY = getRightWallRampYAt(ballX + sample);
+        if (leftY < 0f) {
+            leftY = surfaceY;
+        }
+        if (rightY < 0f) {
+            rightY = surfaceY;
+        }
+
+        float tangentX = sample * 2f;
+        float tangentY = rightY - leftY;
+        float normalX = -tangentY;
+        float normalY = tangentX;
+        float normalLength = (float) Math.hypot(normalX, normalY);
+        if (normalLength <= 0.001f) {
+            normalX = 0f;
+            normalY = -1f;
+        } else {
+            normalX /= normalLength;
+            normalY /= normalLength;
+            if (normalY > 0f) {
+                normalX = -normalX;
+                normalY = -normalY;
+            }
+        }
+
+        ballY = surfaceY - ballRadius;
+        float velocityAlongNormal = velocityX * normalX + velocityY * normalY;
+        if (velocityAlongNormal < 0f) {
+            velocityX -= (1f + RAMP_RESTITUTION) * velocityAlongNormal * normalX;
+            velocityY -= (1f + RAMP_RESTITUTION) * velocityAlongNormal * normalY;
+            velocityX *= RAMP_BOUNCE_DAMPING;
+            velocityY *= RAMP_BOUNCE_DAMPING;
+        }
+        velocityX *= 0.985f;
     }
 
     private void resolveFlipperCollision() {
         float[] pivot = getFlipperPivot();
         float[] end = getFlipperEndPoint();
-        float radius = ballRadius + getFlipperThickness() * 0.45f;
-        if (!resolveSegmentCollision(pivot[0], pivot[1], end[0], end[1], radius, 0.28f)) {
+        float segmentX = end[0] - pivot[0];
+        float segmentY = end[1] - pivot[1];
+        float lengthSquared = segmentX * segmentX + segmentY * segmentY;
+        if (lengthSquared <= 0.001f) {
             return;
         }
 
-        if (flipperTargetAngle == getActiveAngle()) {
-            velocityX = flipperSide * gx(DESIGN_WIDTH * 0.78f);
-            velocityY = -gy(DESIGN_HEIGHT * 1.02f);
+        float t = ((ballX - pivot[0]) * segmentX + (ballY - pivot[1]) * segmentY) / lengthSquared;
+        if (t < 0.05f || t > 0.96f) {
+            return;
+        }
+
+        float nearestX = pivot[0] + segmentX * t;
+        float nearestY = pivot[1] + segmentY * t;
+        float length = (float) Math.sqrt(lengthSquared);
+        float normalX = -segmentY / length;
+        float normalY = segmentX / length;
+        if (normalY > 0f) {
+            normalX = -normalX;
+            normalY = -normalY;
+        }
+
+        float aboveSurface = (ballX - nearestX) * normalX + (ballY - nearestY) * normalY;
+        float surfaceLift = getFlipperSurfaceLift();
+        float velocityAlongNormal = velocityX * normalX + velocityY * normalY;
+        if (aboveSurface <= 0f || aboveSurface > surfaceLift || velocityAlongNormal >= 0f) {
+            return;
+        }
+
+        float penetration = surfaceLift - aboveSurface;
+        ballX += normalX * (penetration + 0.5f);
+        ballY += normalY * (penetration + 0.5f);
+
+        if (flipperTargetAngle == getActiveAngle() && !flipperKickUsed) {
+            kickBallFromFlipper(t);
+        } else {
+            velocityX -= 1.12f * velocityAlongNormal * normalX;
+            velocityY -= 1.12f * velocityAlongNormal * normalY;
         }
     }
 
@@ -380,7 +481,7 @@ public class FlipperDrunkGameView extends FrameLayout {
         hoop.side = hoopSide;
         float wallNudge = gx(5f);
         hoop.openX = hoopSide > 0f
-                ? getRightWallInnerX(gy(DESIGN_HEIGHT * 0.32f)) - gs(DESIGN_WIDTH * 0.085f) + wallNudge
+                ? getRightWallInnerX(gy(DESIGN_HEIGHT * 0.32f)) - gs(DESIGN_WIDTH * 0.085f) + wallNudge + gx(RIGHT_HOOP_OFFSET)
                 : getLeftWallInnerX(gy(DESIGN_HEIGHT * 0.32f)) + gs(DESIGN_WIDTH * 0.085f) - wallNudge;
         hoop.openY = chooseRandomHoopHeight();
         layoutHoop(hoop);
@@ -411,7 +512,7 @@ public class FlipperDrunkGameView extends FrameLayout {
                 hoop.openX + frontWidth * 0.5f + frontOffsetX,
                 frontTop + frontHeight);
         float rimSegmentHeight = Math.max(ballRadius * 0.5f, frontWidth * 12f / 96f);
-        hoop.frontRimX = hoop.openX - hoop.side * (hoop.openingHalfWidth + gx(35f));
+        hoop.frontRimX = hoop.openX - hoop.side * (hoop.openingHalfWidth + gx(HOOP_RIM_COLLIDER_OFFSET));
         hoop.frontRimTop = hoop.openY - rimSegmentHeight * 0.5f;
         hoop.frontRimBottom = hoop.openY + rimSegmentHeight * 0.5f;
     }
@@ -451,8 +552,8 @@ public class FlipperDrunkGameView extends FrameLayout {
     private void layoutFlipper() {
         float[] pivot = getFlipperPivot();
         float[] end = getFlipperEndPoint();
-        float length = distance(pivot[0], pivot[1], end[0], end[1]) * 1.18f;
-        float height = length / FLIPPER_ASPECT;
+        float length = getFlipperVisualLength();
+        float height = getFlipperVisualHeight();
         float left;
         float right;
         float rotation;
@@ -518,6 +619,117 @@ public class FlipperDrunkGameView extends FrameLayout {
         }
     }
 
+    private void drawColliderDebug(Canvas canvas) {
+        if (!SHOW_COLLIDER_DEBUG || viewWidth <= 0f || viewHeight <= 0f) {
+            return;
+        }
+
+        int save = canvas.save();
+        canvas.translate(stageOffsetX, stageOffsetY);
+
+        colliderPaint.setStyle(Paint.Style.STROKE);
+        colliderPaint.setStrokeCap(Paint.Cap.ROUND);
+        colliderPaint.setStrokeJoin(Paint.Join.ROUND);
+        colliderPaint.setStrokeWidth(Math.max(2f, gs(2.2f)));
+
+        colliderPaint.setColor(Color.argb(235, 0, 255, 120));
+        drawSideWallCollider(canvas, -1f);
+        drawSideWallCollider(canvas, 1f);
+
+        colliderPaint.setColor(Color.argb(245, 255, 185, 0));
+        drawRightRampCollider(canvas);
+
+        colliderPaint.setColor(Color.argb(245, 255, 40, 210));
+        drawFlipperCollider(canvas);
+
+        colliderPaint.setColor(Color.argb(245, 255, 60, 60));
+        drawHoopCollider(canvas);
+
+        colliderPaint.setColor(Color.argb(235, 255, 255, 0));
+        canvas.drawCircle(ballX, ballY, ballRadius, colliderPaint);
+
+        colliderPaint.setStyle(Paint.Style.FILL);
+        colliderPaint.setTextAlign(Paint.Align.LEFT);
+        colliderPaint.setTextSize(Math.max(12f, gs(10f)));
+        colliderPaint.setColor(Color.argb(245, 255, 255, 255));
+        canvas.drawText("COLLIDER DEBUG", gs(8f), gy(18f), colliderPaint);
+
+        canvas.restoreToCount(save);
+    }
+
+    private void drawSideWallCollider(Canvas canvas, float side) {
+        float topY = 0f;
+        float bottomY = side > 0f
+                ? Math.min(viewHeight, gy(DESIGN_HEIGHT * RIGHT_WALL_RAMP_START_Y) - getWallLift())
+                : viewHeight - getWallLift();
+        float step = Math.max(gs(4f), viewHeight / 140f);
+        float lastX = getSideWallInnerX(topY, side);
+        float lastY = topY;
+        for (float y = topY + step; y <= bottomY; y += step) {
+            float x = getSideWallInnerX(y, side);
+            canvas.drawLine(lastX, lastY, x, y, colliderPaint);
+            lastX = x;
+            lastY = y;
+        }
+        if (lastY < bottomY) {
+            float x = getSideWallInnerX(bottomY, side);
+            canvas.drawLine(lastX, lastY, x, bottomY, colliderPaint);
+        }
+    }
+
+    private void drawRightRampCollider(Canvas canvas) {
+        float leftX = viewWidth - getRightWallWidth();
+        float rightX = viewWidth;
+        float step = Math.max(gs(3f), getRightWallWidth() / 64f);
+        boolean hasLast = false;
+        float lastX = 0f;
+        float lastY = 0f;
+        for (float x = leftX; x <= rightX; x += step) {
+            float y = getRightWallRampYAt(x);
+            if (y >= 0f) {
+                if (hasLast) {
+                    canvas.drawLine(lastX, lastY, x, y, colliderPaint);
+                }
+                lastX = x;
+                lastY = y;
+                hasLast = true;
+            } else {
+                hasLast = false;
+            }
+        }
+    }
+
+    private void drawFlipperCollider(Canvas canvas) {
+        float[] pivot = getFlipperPivot();
+        float[] end = getFlipperEndPoint();
+        canvas.drawLine(pivot[0], pivot[1], end[0], end[1], colliderPaint);
+
+        float segmentX = end[0] - pivot[0];
+        float segmentY = end[1] - pivot[1];
+        float length = Math.max(1f, (float) Math.hypot(segmentX, segmentY));
+        float normalX = -segmentY / length;
+        float normalY = segmentX / length;
+        if (normalY > 0f) {
+            normalX = -normalX;
+            normalY = -normalY;
+        }
+        float lift = getFlipperSurfaceLift();
+        canvas.drawLine(pivot[0] + normalX * lift, pivot[1] + normalY * lift,
+                end[0] + normalX * lift, end[1] + normalY * lift, colliderPaint);
+    }
+
+    private void drawHoopCollider(Canvas canvas) {
+        for (Hoop hoop : hoops) {
+            if (hoop.scored) {
+                continue;
+            }
+            canvas.drawLine(hoop.frontRimX, hoop.frontRimTop,
+                    hoop.frontRimX, hoop.frontRimBottom, colliderPaint);
+            canvas.drawLine(hoop.openX - hoop.openingHalfWidth, hoop.openY,
+                    hoop.openX + hoop.openingHalfWidth, hoop.openY, colliderPaint);
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
@@ -528,37 +740,95 @@ public class FlipperDrunkGameView extends FrameLayout {
     }
 
     private void activateFlipper() {
+        if (gameOver) {
+            return;
+        }
         waitingForFirstTap = false;
+        flipperKickUsed = false;
         flipperTimer = FLIP_SECONDS;
         flipperTargetAngle = getActiveAngle();
-        if (isBallNearFlipper()) {
-            velocityX = flipperSide * gx(DESIGN_WIDTH * 0.78f);
-            velocityY = -gy(DESIGN_HEIGHT * 1.02f);
+        float contactT = getBallFlipperContactT();
+        if (contactT >= 0f) {
+            kickBallFromFlipper(contactT);
         }
     }
 
-    private boolean isBallNearFlipper() {
+    private void kickBallFromFlipper(float contactT) {
+        flipperKickUsed = true;
+        float tipAmount = clamp(contactT, 0f, 1f);
+        float angleDegrees = FLIPPER_MAX_LAUNCH_ANGLE
+                - (FLIPPER_MAX_LAUNCH_ANGLE - FLIPPER_MIN_LAUNCH_ANGLE) * tipAmount;
+        float incomingInfluence = clamp(velocityX / Math.max(1f, gx(DESIGN_WIDTH * 1.4f)), -0.12f, 0.12f);
+        angleDegrees += incomingInfluence * 18f;
+
+        float radians = (float) Math.toRadians(angleDegrees);
+        float speed = gy(DESIGN_HEIGHT * (FLIPPER_LAUNCH_SPEED + tipAmount * 0.12f));
+        float previousX = velocityX;
+        float previousY = velocityY;
+        velocityX = flipperSide * (float) Math.cos(radians) * speed + previousX * 0.16f;
+        velocityY = -(float) Math.sin(radians) * speed + Math.min(0f, previousY) * 0.08f;
+        ballRotation += flipperSide * (0.4f + tipAmount * 0.35f);
+    }
+
+    private void triggerGameOver() {
+        if (gameOver) {
+            return;
+        }
+
+        gameOver = true;
+        velocityX = 0f;
+        velocityY = 0f;
+        if (gameOverListener != null) {
+            gameOverListener.onGameOver();
+        }
+    }
+
+    public void setGameOverListener(GameOverListener gameOverListener) {
+        this.gameOverListener = gameOverListener;
+    }
+
+    private boolean isBallOnFlipperSurface() {
+        return getBallFlipperContactT() >= 0f;
+    }
+
+    private float getBallFlipperContactT() {
         float[] pivot = getFlipperPivot();
         float[] end = getFlipperEndPoint();
         float segmentX = end[0] - pivot[0];
         float segmentY = end[1] - pivot[1];
         float lengthSquared = segmentX * segmentX + segmentY * segmentY;
         if (lengthSquared <= 0.001f) {
-            return false;
+            return -1f;
         }
         float t = ((ballX - pivot[0]) * segmentX + (ballY - pivot[1]) * segmentY) / lengthSquared;
+        if (t < 0.05f || t > 0.96f) {
+            return -1f;
+        }
         t = clamp(t, 0f, 1f);
         float nearestX = pivot[0] + segmentX * t;
         float nearestY = pivot[1] + segmentY * t;
-        float dx = ballX - nearestX;
-        float dy = ballY - nearestY;
-        float radius = ballRadius + getFlipperThickness() * 1.2f;
-        return dx * dx + dy * dy <= radius * radius;
+        float length = (float) Math.sqrt(lengthSquared);
+        float normalX = -segmentY / length;
+        float normalY = segmentX / length;
+        if (normalY > 0f) {
+            normalX = -normalX;
+            normalY = -normalY;
+        }
+        float offsetX = ballX - nearestX;
+        float offsetY = ballY - nearestY;
+        float aboveSurface = offsetX * normalX + offsetY * normalY;
+        float tangentDistance = Math.abs(offsetX * (segmentX / length) + offsetY * (segmentY / length));
+        float maxSurfaceGap = getFlipperSurfaceLift() + ballRadius * 0.35f;
+        return aboveSurface > 0f
+                && aboveSurface <= maxSurfaceGap
+                && tangentDistance <= ballRadius * 0.5f
+                ? t
+                : -1f;
     }
 
     private float[] getFlipperPivot() {
         float x = flipperSide > 0f ? gx(DESIGN_WIDTH * 0.55f) : gx(DESIGN_WIDTH * 0.45f);
-        float y = gy(DESIGN_HEIGHT * 0.82f);
+        float y = gy(DESIGN_HEIGHT * 0.82f) + gs(FLIPPER_PIVOT_DOWN);
         return new float[] { x, y };
     }
 
@@ -580,8 +850,18 @@ public class FlipperDrunkGameView extends FrameLayout {
         return flipperSide > 0f ? 200f : -20f;
     }
 
-    private float getFlipperThickness() {
-        return gs(DESIGN_WIDTH * 0.085f * FLIPPER_SCALE);
+    private float getFlipperVisualLength() {
+        float[] pivot = getFlipperPivot();
+        float[] end = getFlipperEndPoint();
+        return distance(pivot[0], pivot[1], end[0], end[1]) * 1.18f;
+    }
+
+    private float getFlipperVisualHeight() {
+        return getFlipperVisualLength() / FLIPPER_ASPECT;
+    }
+
+    private float getFlipperSurfaceLift() {
+        return ballRadius + getFlipperVisualHeight() * FLIPPER_SURFACE_HEIGHT_RATIO;
     }
 
     private float getSideWallInnerX(float y, float side) {
@@ -593,30 +873,144 @@ public class FlipperDrunkGameView extends FrameLayout {
 
     private float getSideWallSlope(float y, float side) {
         float sample = Math.max(gs(2f), gy(DESIGN_HEIGHT * 0.004f));
+        if (side > 0f && isRightWallRampZone(y + sample)) {
+            return 0f;
+        }
         float top = getSideWallInnerX(y - sample, side);
         float bottom = getSideWallInnerX(y + sample, side);
         return (bottom - top) / (sample * 2f);
     }
 
     private float getRightWallInnerX(float y) {
+        float sampledX = getRightWallAlphaInnerX(y);
+        if (sampledX >= 0f) {
+            return sampledX;
+        }
+
         float wallWidth = getRightWallWidth();
-        float straightX = viewWidth - wallWidth * 0.34f;
+        float straightX = viewWidth - wallWidth * 0.27f;
         float localY = y + getWallLift();
-        float curveStart = gy(DESIGN_HEIGHT * 0.66f);
-        float curveEnd = gy(DESIGN_HEIGHT * 0.91f);
+        float curveStart = gy(DESIGN_HEIGHT * 0.61f);
+        float curveEnd = gy(DESIGN_HEIGHT * 0.89f);
         if (localY <= curveStart) {
             return straightX;
         }
 
         float progress = clamp((localY - curveStart) / Math.max(1f, curveEnd - curveStart), 0f, 1f);
-        float smooth = progress * progress * (3f - 2f * progress);
-        float deepestInset = wallWidth * 0.74f;
+        float smooth = progress * progress * progress * (progress * (progress * 6f - 15f) + 10f);
+        float deepestInset = wallWidth * 0.82f;
         float curvedX = straightX - deepestInset * smooth;
         if (progress >= 1f) {
             float lowerProgress = clamp((localY - curveEnd) / Math.max(1f, gy(DESIGN_HEIGHT) - curveEnd), 0f, 1f);
-            curvedX += wallWidth * 0.12f * lowerProgress;
+            curvedX += wallWidth * 0.08f * lowerProgress;
         }
         return curvedX;
+    }
+
+    private boolean isRightWallRampZone(float y) {
+        return y + getWallLift() >= gy(DESIGN_HEIGHT * RIGHT_WALL_RAMP_START_Y);
+    }
+
+    private float getRightWallRampYAt(float x) {
+        if (rightWallBitmap == null || rightWallBitmap.isRecycled()) {
+            return -1f;
+        }
+
+        float wallWidth = getRightWallWidth();
+        float localX = x - (viewWidth - wallWidth);
+        float leadInWidth = wallWidth * RIGHT_WALL_RAMP_LEAD_IN_WIDTH;
+        if (localX < -leadInWidth || localX > wallWidth) {
+            return -1f;
+        }
+
+        if (localX < 0f) {
+            float entryYProgress = getRightWallRampEntryYProgress(wallWidth);
+            float leadInDrop = (float) Math.tan(Math.toRadians(RIGHT_WALL_RAMP_ENTRY_SLOPE_DEGREES))
+                    * -localX;
+            return entryYProgress * gy(DESIGN_HEIGHT) - getWallLift() - gs(1f) + leadInDrop;
+        }
+
+        float localProgress = clamp(localX / Math.max(1f, wallWidth), 0f, 1f);
+        int bitmapX = Math.round(localProgress * (rightWallBitmap.getWidth() - 1));
+        int topMostOpaque = -1;
+        for (int y = 0; y < rightWallBitmap.getHeight(); y++) {
+            int alpha = (rightWallBitmap.getPixel(bitmapX, y) >>> 24) & 0xff;
+            if (alpha > WALL_ALPHA_THRESHOLD) {
+                topMostOpaque = y;
+                break;
+            }
+        }
+        if (topMostOpaque < 0) {
+            return -1f;
+        }
+
+        float bitmapYProgress = topMostOpaque / (float) Math.max(1, rightWallBitmap.getHeight() - 1);
+        if (localProgress < RIGHT_WALL_RAMP_SMOOTH_EXIT) {
+            bitmapYProgress = getRightWallRampEntryYProgress(wallWidth)
+                    - localProgress * wallWidth
+                    * (float) Math.tan(Math.toRadians(RIGHT_WALL_RAMP_ENTRY_SLOPE_DEGREES))
+                    / Math.max(1f, gy(DESIGN_HEIGHT));
+        }
+        if (bitmapYProgress < RIGHT_WALL_RAMP_START_Y) {
+            return -1f;
+        }
+        return bitmapYProgress * gy(DESIGN_HEIGHT) - getWallLift() - gs(1f);
+    }
+
+    private float getRightWallRampEntryYProgress(float wallWidth) {
+        float targetProgress = getRightWallRampAlphaYProgress(RIGHT_WALL_RAMP_SMOOTH_EXIT);
+        if (targetProgress < RIGHT_WALL_RAMP_START_Y) {
+            targetProgress = 0.835f;
+        }
+        float distanceToExit = RIGHT_WALL_RAMP_SMOOTH_EXIT * wallWidth;
+        float slopeDrop = (float) Math.tan(Math.toRadians(RIGHT_WALL_RAMP_ENTRY_SLOPE_DEGREES))
+                * distanceToExit;
+        return targetProgress + slopeDrop / Math.max(1f, gy(DESIGN_HEIGHT));
+    }
+
+    private float getRightWallRampAlphaYProgress(float localProgress) {
+        if (rightWallBitmap == null || rightWallBitmap.isRecycled()) {
+            return -1f;
+        }
+
+        int bitmapX = Math.round(clamp(localProgress, 0f, 1f)
+                * (rightWallBitmap.getWidth() - 1));
+        for (int y = 0; y < rightWallBitmap.getHeight(); y++) {
+            int alpha = (rightWallBitmap.getPixel(bitmapX, y) >>> 24) & 0xff;
+            if (alpha > WALL_ALPHA_THRESHOLD) {
+                return y / (float) Math.max(1, rightWallBitmap.getHeight() - 1);
+            }
+        }
+        return -1f;
+    }
+
+    private float getRightWallAlphaInnerX(float y) {
+        if (rightWallBitmap == null || rightWallBitmap.isRecycled()) {
+            return -1f;
+        }
+
+        float wallWidth = getRightWallWidth();
+        float localY = y + getWallLift();
+        if (localY < 0f || localY > gy(DESIGN_HEIGHT)) {
+            return -1f;
+        }
+
+        int bitmapY = Math.round(clamp(localY / Math.max(1f, gy(DESIGN_HEIGHT)), 0f, 1f)
+                * (rightWallBitmap.getHeight() - 1));
+        int leftMostOpaque = -1;
+        for (int x = 0; x < rightWallBitmap.getWidth(); x++) {
+            int alpha = (rightWallBitmap.getPixel(x, bitmapY) >>> 24) & 0xff;
+            if (alpha > WALL_ALPHA_THRESHOLD) {
+                leftMostOpaque = x;
+                break;
+            }
+        }
+        if (leftMostOpaque < 0 || leftMostOpaque == 0) {
+            return -1f;
+        }
+
+        float bitmapProgress = leftMostOpaque / (float) Math.max(1, rightWallBitmap.getWidth() - 1);
+        return viewWidth - wallWidth + bitmapProgress * wallWidth + gs(1.5f);
     }
 
     private float getLeftWallInnerX(float y) {
@@ -640,12 +1034,6 @@ public class FlipperDrunkGameView extends FrameLayout {
 
     private float getWallLift() {
         return gs(DESIGN_WIDTH * 0.11f);
-    }
-
-    private float getFloorYAt(float x) {
-        float base = gy(DESIGN_HEIGHT * 0.92f);
-        float curve = (float) Math.cos((x / Math.max(1f, gx(DESIGN_WIDTH))) * Math.PI) * gs(DESIGN_WIDTH * 0.028f);
-        return base + curve;
     }
 
     private void updateScoreView() {
@@ -697,5 +1085,9 @@ public class FlipperDrunkGameView extends FrameLayout {
         float frontRimTop;
         float frontRimBottom;
         boolean scored;
+    }
+
+    public interface GameOverListener {
+        void onGameOver();
     }
 }
