@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Game43</string>
+    <string name="peglinko_add_ball">+1 Ball</string>
+    <string name="peglinko_ball_count">Balls %1$d/%2$d</string>
+    <string name="peglinko_add_ball_question">Bạn có muốn\nthêm 1 bóng không?</string>
+    <string name="peglinko_yes">Có</string>
+    <string name="peglinko_no">Không</string>
 </resources>

@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2F8EA3"
+    tools:context=".Peglinko.Peglinko">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/boardContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1320:1775"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/staticBoardLayer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layerType="hardware"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/frameImage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/peglinko_frame_runtime"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/launcherStartGuide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.873" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/launcherEndGuide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.988" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/launcherTopGuide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.47" />
+
+            <ImageView
+                android:id="@+id/launcherImage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/peglinko_power_track_runtime"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/launcherEndGuide"
+                app:layout_constraintStart_toStartOf="@id/launcherStartGuide"
+                app:layout_constraintTop_toTopOf="@id/launcherTopGuide" />
+
+            <com.example.game43.Peglinko.PeglinkoGameView
+                android:id="@+id/gameView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/physicsBallImage"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:clickable="false"
+            android:contentDescription="@null"
+            android:focusable="false"
+            android:scaleType="fitCenter"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/coinPanel"
+        android:layout_width="150dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="14dp"
+        android:background="@drawable/peglinko_coin_panel"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/coinIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/peglinko_coin_circle" />
+
+        <TextView
+            android:id="@+id/coinText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/addBallButton"
+        android:layout_width="112dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/peglinko_add_ball_button"
+        android:gravity="center"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp"
+        android:text="@string/peglinko_add_ball"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/ballTray"
+        android:layout_width="104dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="78dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/ballCountText"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:gravity="center"
+            android:text="Balls 0/9"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Balls 6/9" />
+
+        <GridLayout
+            android:id="@+id/ballGrid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:rowCount="3">
+
+            <ImageView android:id="@+id/ballSlot0" style="@style/PeglinkoBallSlot" />
+            <ImageView android:id="@+id/ballSlot1" style="@style/PeglinkoBallSlot" />
+            <ImageView android:id="@+id/ballSlot2" style="@style/PeglinkoBallSlot" />
+            <ImageView android:id="@+id/ballSlot3" style="@style/PeglinkoBallSlot" />
+            <ImageView android:id="@+id/ballSlot4" style="@style/PeglinkoBallSlot" />
+            <ImageView android:id="@+id/ballSlot5" style="@style/PeglinkoBallSlot" />
+            <ImageView android:id="@+id/ballSlot6" style="@style/PeglinkoBallSlot" />
+            <ImageView android:id="@+id/ballSlot7" style="@style/PeglinkoBallSlot" />
+            <ImageView android:id="@+id/ballSlot8" style="@style/PeglinkoBallSlot" />
+
+        </GridLayout>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addBallOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#84000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/addBallPopup"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="225:261"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="320dp"
+            app:layout_constraintWidth_percent="0.58">
+
+            <ImageView
+                android:id="@+id/addBallPopupImage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/popup"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/addBallQuestion"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/peglinko_add_ball_question"
+                android:textColor="#424242"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="16sp"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toTopOf="@id/confirmAddBallButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.9"
+                app:layout_constraintWidth_percent="0.75" />
+
+            <FrameLayout
+                android:id="@+id/confirmAddBallButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/cancelAddBallButton"
+                app:layout_constraintHeight_percent="0.14"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.72"
+                app:layout_constraintWidth_percent="0.34">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/button_popup1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/peglinko_yes"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/cancelAddBallButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="@id/confirmAddBallButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.14"
+                app:layout_constraintStart_toEndOf="@id/confirmAddBallButton"
+                app:layout_constraintTop_toTopOf="@id/confirmAddBallButton"
+                app:layout_constraintWidth_percent="0.34">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/button_popup2" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/peglinko_no"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+            </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

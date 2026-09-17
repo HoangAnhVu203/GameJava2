@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_gravity="fill"
+    android:layout_columnWeight="1"
+    android:layout_rowWeight="1"
+    android:layout_margin="3dp"
+    android:background="@drawable/rocket_upgrade_card"
+    android:padding="7dp">
+    <ImageView android:id="@+id/speedIcon" android:layout_width="48dp" android:layout_height="48dp" android:contentDescription="@null" android:src="@drawable/rocket_icon_speed" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    <TextView android:id="@+id/speedTitle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="6dp" android:text="SPEED" android:textColor="#FFEB3B" android:textSize="12sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@id/speedIcon" app:layout_constraintTop_toTopOf="parent" />
+    <TextView android:id="@+id/speedLevelText" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="6dp" android:text="Lv. 1" android:textColor="#FFFFFF" android:textSize="11sp" app:layout_constraintEnd_toStartOf="@id/speedUpgradeButton" app:layout_constraintStart_toEndOf="@id/speedIcon" app:layout_constraintTop_toBottomOf="@id/speedTitle" />
+    <TextView android:id="@+id/speedUpgradeButton" android:layout_width="58dp" android:layout_height="34dp" android:background="@drawable/rocket_upgrade_button" android:clickable="true" android:focusable="true" android:gravity="center" android:text="$5" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

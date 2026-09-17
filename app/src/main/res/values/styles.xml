@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="GameMenuButton" parent="Widget.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="PeglinkoBallSlot">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:background">@drawable/peglinko_ball_slot</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:contentDescription">@null</item>
+    </style>
+</resources>

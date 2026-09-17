@@ -17,114 +17,40 @@
         android:textColor="#FFFFFF"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/basketballButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/basketballButton"
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="32dp"
-        android:text="Basketball"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/ballButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleText" />
-
-    <Button
-        android:id="@+id/ballButton"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:text="Ball"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/tapeItUpButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/basketballButton" />
-
-    <Button
-        android:id="@+id/tapeItUpButton"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:text="TapeItUp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/seaCatcherButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ballButton" />
-
-    <Button
-        android:id="@+id/seaCatcherButton"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:text="Sea Catcher"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/ballBlastButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tapeItUpButton" />
-
-    <Button
-        android:id="@+id/ballBlastButton"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:text="Ball Blast"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/superBallFallButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/seaCatcherButton" />
-
-    <Button
-        android:id="@+id/superBallFallButton"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:text="Super Ball Fall"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/tinyFishingButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ballBlastButton" />
-
-    <Button
-        android:id="@+id/tinyFishingButton"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:text="Tiny Fishing"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/flipperDrunkButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/superBallFallButton" />
-
-    <Button
-        android:id="@+id/flipperDrunkButton"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:text="Flipper Drunk"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_height="0dp"
+        android:layout_marginTop="18dp"
+        android:fillViewport="true"
+        android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tinyFishingButton" />
+        app:layout_constraintTop_toBottomOf="@id/titleText">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button android:id="@+id/basketballButton" style="@style/GameMenuButton" android:text="Basketball" />
+            <Button android:id="@+id/ballButton" style="@style/GameMenuButton" android:text="Ball" />
+            <Button android:id="@+id/tapeItUpButton" style="@style/GameMenuButton" android:text="TapeItUp" />
+            <Button android:id="@+id/seaCatcherButton" style="@style/GameMenuButton" android:text="Sea Catcher" />
+            <Button android:id="@+id/ballBlastButton" style="@style/GameMenuButton" android:text="Ball Blast" />
+            <Button android:id="@+id/superBallFallButton" style="@style/GameMenuButton" android:text="Super Ball Fall" />
+            <Button android:id="@+id/tinyFishingButton" style="@style/GameMenuButton" android:text="Tiny Fishing" />
+            <Button android:id="@+id/flipperDrunkButton" style="@style/GameMenuButton" android:text="Flipper Drunk" />
+            <Button android:id="@+id/peglinkoButton" style="@style/GameMenuButton" android:text="Peglinko" />
+            <Button android:id="@+id/rocketLaunchButton" style="@style/GameMenuButton" android:text="Rocket Launch" />
+            <Button android:id="@+id/dunkALotButton" style="@style/GameMenuButton" android:layout_marginBottom="0dp" android:text="Dunk A Lot" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

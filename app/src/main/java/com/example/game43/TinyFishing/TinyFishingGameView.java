@@ -67,6 +67,8 @@ public class TinyFishingGameView extends View {
     private Bitmap[] fishBitmaps;
     private Bitmap[] jellyBitmaps;
     private Bitmap[] coralBitmaps;
+    private Shader waterShader;
+    private Shader skyShader;
     private MoneyStateListener moneyStateListener;
 
     private float viewWidth;
@@ -201,6 +203,16 @@ public class TinyFishingGameView extends View {
         spinnerSize = minSide * 0.24f;
         spinnerCenterX = viewWidth * 0.5f;
         spinnerCenterY = waterTopY + spinnerSize * 0.12f;
+        waterShader = new LinearGradient(0f, waterTopY, 0f, worldHeight,
+                new int[] {
+                        Color.rgb(0, 93, 244),
+                        Color.rgb(11, 54, 218),
+                        Color.rgb(13, 30, 155)
+                },
+                new float[] {0f, 0.42f, 1f},
+                Shader.TileMode.CLAMP);
+        skyShader = new LinearGradient(0f, 0f, 0f, waterTopY,
+                Color.rgb(94, 87, 248), Color.rgb(89, 224, 227), Shader.TileMode.CLAMP);
         resetGame();
     }
 
@@ -713,17 +725,8 @@ public class TinyFishingGameView extends View {
     }
 
     private void drawWater(Canvas canvas) {
-        Shader previousShader = waterPaint.getShader();
-        waterPaint.setShader(new LinearGradient(0f, waterTopY, 0f, worldHeight,
-                new int[] {
-                        Color.rgb(0, 93, 244),
-                        Color.rgb(11, 54, 218),
-                        Color.rgb(13, 30, 155)
-                },
-                new float[] {0f, 0.42f, 1f},
-                Shader.TileMode.CLAMP));
+        waterPaint.setShader(waterShader);
         canvas.drawRect(0f, waterTopY, viewWidth, worldHeight, waterPaint);
-        waterPaint.setShader(previousShader);
         drawDepthShadows(canvas);
     }
 
@@ -766,6 +769,9 @@ public class TinyFishingGameView extends View {
 
     private void drawCorals(Canvas canvas) {
         for (Coral coral : corals) {
+            if (!isVisibleVertically(coral.y, coral.size)) {
+                continue;
+            }
             drawBitmapCentered(canvas, coral.bitmap, coral.x, coral.y, coral.size,
                     coral.flip, coral.rotation, 235);
         }
@@ -773,6 +779,9 @@ public class TinyFishingGameView extends View {
 
     private void drawFishes(Canvas canvas) {
         for (Fish fish : fishes) {
+            if (!isVisibleVertically(fish.y, fish.size)) {
+                continue;
+            }
             if (caughtFishes.contains(fish)) {
                 drawBitmapCentered(canvas, fish.bitmap, fish.x, fish.y, fish.size, caughtFishFlip(fish), fish.caughtRotation, 255);
                 continue;
@@ -784,6 +793,9 @@ public class TinyFishingGameView extends View {
 
     private void drawFlyingFishes(Canvas canvas) {
         for (FlyingFish fish : flyingFishes) {
+            if (!isVisibleVertically(fish.y, fish.size)) {
+                continue;
+            }
             float progress = Math.min(1f, fish.age / fish.life);
             int alpha = (int) (255f * (1f - progress * 0.35f));
             drawBitmapCentered(canvas, fish.bitmap, fish.x, fish.y, fish.size, fish.flip, fish.rotation, alpha);
@@ -967,11 +979,9 @@ public class TinyFishingGameView extends View {
     }
 
     private void drawSkyFallback(Canvas canvas) {
-        Shader previousShader = sceneryPaint.getShader();
-        sceneryPaint.setShader(new LinearGradient(0f, 0f, 0f, waterTopY,
-                Color.rgb(94, 87, 248), Color.rgb(89, 224, 227), Shader.TileMode.CLAMP));
+        sceneryPaint.setShader(skyShader);
         canvas.drawRect(0f, 0f, viewWidth, waterTopY, sceneryPaint);
-        sceneryPaint.setShader(previousShader);
+        sceneryPaint.setShader(null);
 
         sceneryPaint.setColor(Color.rgb(94, 170, 67));
         drawRect.set(0f, waterTopY - minSide * 0.12f, viewWidth, waterTopY + minSide * 0.03f);
@@ -996,6 +1006,9 @@ public class TinyFishingGameView extends View {
         for (int i = 0; i < 7; i++) {
             float depth = (i + 0.5f) / 7f;
             float centerY = waterTopY + (worldHeight - waterTopY) * depth;
+            if (!isVisibleVertically(centerY, minSide * 0.34f)) {
+                continue;
+            }
             float centerX = i % 2 == 0 ? leftWaterBound + sideLandWidth * 0.42f : rightWaterBound - sideLandWidth * 0.42f;
             drawRect.set(centerX - minSide * 0.34f, centerY - minSide * 0.16f,
                     centerX + minSide * 0.34f, centerY + minSide * 0.16f);
@@ -1006,6 +1019,9 @@ public class TinyFishingGameView extends View {
     private void drawBubbles(Canvas canvas) {
         bubblePaint.setStyle(Paint.Style.FILL);
         for (Bubble bubble : bubbles) {
+            if (!isVisibleVertically(bubble.y, bubble.radius)) {
+                continue;
+            }
             float progress = Math.min(1f, bubble.age / bubble.life);
             bubblePaint.setColor(Color.argb((int) (120f * (1f - progress)), 232, 250, 255));
             canvas.drawCircle(bubble.x, bubble.y, bubble.radius, bubblePaint);
@@ -1152,6 +1168,11 @@ public class TinyFishingGameView extends View {
 
     private float maxCameraY() {
         return Math.max(0f, worldHeight - viewHeight);
+    }
+
+    private boolean isVisibleVertically(float centerY, float extent) {
+        float margin = Math.max(extent, minSide * 0.03f);
+        return centerY + margin >= cameraY && centerY - margin <= cameraY + viewHeight;
     }
 
     private float minHookControlX() {

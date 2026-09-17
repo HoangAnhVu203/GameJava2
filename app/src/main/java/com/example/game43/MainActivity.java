@@ -9,6 +9,8 @@ import com.example.game43.BallBlast.BallBlast;
 import com.example.game43.FlipperDrunk.FlipperDrunk;
 import com.example.game43.GameBall.Ball;
 import com.example.game43.GameBasketball.Basketball;
+import com.example.game43.Peglinko.Peglinko;
+import com.example.game43.RocketLaunch.RocketLaunch;
 import com.example.game43.SeaCatcher.SeaCatcher;
 import com.example.game43.SupertBallFall.SuperBallFall;
 import com.example.game43.TapeItUp.TapeItUp;
@@ -37,5 +39,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, TinyFishing.class)));
         findViewById(R.id.flipperDrunkButton).setOnClickListener(v ->
                 startActivity(new Intent(this, FlipperDrunk.class)));
+        findViewById(R.id.peglinkoButton).setOnClickListener(v ->
+                startActivity(new Intent(this, Peglinko.class)));
+        findViewById(R.id.rocketLaunchButton).setOnClickListener(v ->
+                startActivity(new Intent(this, RocketLaunch.class)));
+        findViewById(R.id.dunkALotButton).setOnClickListener(v ->
+                startActivity(new Intent(this, DunkALot.class)));
     }
 }

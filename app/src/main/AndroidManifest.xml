@@ -53,6 +53,20 @@
             android:name=".FlipperDrunk.FlipperDrunk"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Peglinko.Peglinko"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".RocketLaunch.RocketLaunch"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".DunkALot"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
