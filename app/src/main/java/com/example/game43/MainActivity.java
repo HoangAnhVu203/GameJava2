@@ -5,7 +5,11 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.game43.AirHockey.AirHockey;
+import com.example.game43.Asteroid.Asteroid;
 import com.example.game43.BallBlast.BallBlast;
+import com.example.game43.DunkALot.DunkALot;
+import com.example.game43.FlappyDunk.FlappyDunk;
 import com.example.game43.FlipperDrunk.FlipperDrunk;
 import com.example.game43.GameBall.Ball;
 import com.example.game43.GameBasketball.Basketball;
@@ -45,5 +49,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, RocketLaunch.class)));
         findViewById(R.id.dunkALotButton).setOnClickListener(v ->
                 startActivity(new Intent(this, DunkALot.class)));
+        findViewById(R.id.airHockeyButton).setOnClickListener(v ->
+                startActivity(new Intent(this, AirHockey.class)));
+        findViewById(R.id.flappyDunkButton).setOnClickListener(v ->
+                startActivity(new Intent(this, FlappyDunk.class)));
+        findViewById(R.id.asteroidButton).setOnClickListener(v ->
+                startActivity(new Intent(this, Asteroid.class)));
     }
 }

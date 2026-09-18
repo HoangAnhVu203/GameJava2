@@ -1,41 +1,32 @@
-package com.example.game43;
+package com.example.game43.FlappyDunk;
 
 import android.os.Bundle;
+import android.view.WindowManager;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
-public class DunkALot extends AppCompatActivity {
-    private DunkALotGameView gameView;
+import com.example.game43.R;
+
+public class FlappyDunk extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        setContentView(R.layout.activity_dunk_alot);
-        gameView = findViewById(R.id.dunkGameView);
+        setContentView(R.layout.activity_flappy_dunk);
         hideSystemBars();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (gameView != null) {
-            gameView.resumeGame();
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemBars();
         }
-        hideSystemBars();
-    }
-
-    @Override
-    protected void onPause() {
-        if (gameView != null) {
-            gameView.pauseGame();
-        }
-        super.onPause();
     }
 
     private void hideSystemBars() {

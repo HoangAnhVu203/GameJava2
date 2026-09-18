@@ -4,14 +4,12 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#67347E"
-    tools:context=".DunkALot.DunkALot">
+    android:keepScreenOn="true"
+    tools:context=".AirHockey.AirHockey">
 
-    <com.example.game43.DunkALot.DunkALotGameView
-        android:id="@+id/dunkGameView"
+    <com.example.game43.AirHockey.AirHockeyGameView
+        android:id="@+id/airHockeyGameView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="Dunk A Lot gameplay"
-        android:keepScreenOn="true" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>

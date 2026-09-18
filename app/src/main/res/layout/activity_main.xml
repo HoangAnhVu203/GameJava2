@@ -47,7 +47,10 @@
             <Button android:id="@+id/flipperDrunkButton" style="@style/GameMenuButton" android:text="Flipper Drunk" />
             <Button android:id="@+id/peglinkoButton" style="@style/GameMenuButton" android:text="Peglinko" />
             <Button android:id="@+id/rocketLaunchButton" style="@style/GameMenuButton" android:text="Rocket Launch" />
-            <Button android:id="@+id/dunkALotButton" style="@style/GameMenuButton" android:layout_marginBottom="0dp" android:text="Dunk A Lot" />
+            <Button android:id="@+id/dunkALotButton" style="@style/GameMenuButton" android:text="Dunk A Lot" />
+            <Button android:id="@+id/airHockeyButton" style="@style/GameMenuButton" android:text="Air Hockey" />
+            <Button android:id="@+id/flappyDunkButton" style="@style/GameMenuButton" android:text="Flappy Dunk" />
+            <Button android:id="@+id/asteroidButton" style="@style/GameMenuButton" android:layout_marginBottom="0dp" android:text="Asteroid" />
 
         </LinearLayout>
 

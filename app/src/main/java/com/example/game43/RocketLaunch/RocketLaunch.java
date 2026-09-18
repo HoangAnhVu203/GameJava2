@@ -22,6 +22,10 @@ import java.util.Locale;
 public class RocketLaunch extends AppCompatActivity {
     private static final String PREFS_NAME = "rocket_launch_progress";
     private static final float MAX_FRAME_SECONDS = 1f / 30f;
+    private static final float FLIGHT_SPEED_MULTIPLIER = 2f;
+    private static final float SCENE_SCROLL_MULTIPLIER = 5f;
+    private static final float FALL_SPEED_MULTIPLIER = 5f;
+    private static final float FUEL_EFFICIENCY_MULTIPLIER = 1.5f;
 
     private enum FlightState {
         READY,
@@ -31,6 +35,7 @@ public class RocketLaunch extends AppCompatActivity {
 
     private View flightArea;
     private View rocketActor;
+    private View rocketVisual;
     private View rocketFlame;
     private RocketExhaustView rocketExhaust;
     private View rocketPlatform;
@@ -122,6 +127,7 @@ public class RocketLaunch extends AppCompatActivity {
     private void bindViews() {
         flightArea = findViewById(R.id.flightArea);
         rocketActor = findViewById(R.id.rocketActor);
+        rocketVisual = findViewById(R.id.rocketVisual);
         rocketFlame = findViewById(R.id.rocketFlame);
         rocketExhaust = findViewById(R.id.rocketExhaust);
         rocketPlatform = findViewById(R.id.rocketPlatform);
@@ -146,6 +152,23 @@ public class RocketLaunch extends AppCompatActivity {
         fuelUpgradeButton = findViewById(R.id.fuelUpgradeButton);
         incomeUpgradeButton = findViewById(R.id.incomeUpgradeButton);
         powerUpgradeButton = findViewById(R.id.powerUpgradeButton);
+        rocketActor.addOnLayoutChangeListener((view, left, top, right, bottom,
+                                                oldLeft, oldTop, oldRight, oldBottom) ->
+                fitRocketVisual());
+    }
+
+    private void fitRocketVisual() {
+        if (rocketActor.getWidth() <= 0 || rocketActor.getHeight() <= 0
+                || rocketVisual.getWidth() <= 0 || rocketVisual.getHeight() <= 0) {
+            return;
+        }
+        float scale = Math.min(
+                (float) rocketActor.getWidth() / rocketVisual.getWidth(),
+                (float) rocketActor.getHeight() / rocketVisual.getHeight());
+        rocketVisual.setPivotX(rocketVisual.getWidth() * 0.5f);
+        rocketVisual.setPivotY(rocketVisual.getHeight());
+        rocketVisual.setScaleX(scale);
+        rocketVisual.setScaleY(scale);
     }
 
     private void bindRocketHoldInput() {
@@ -182,7 +205,7 @@ public class RocketLaunch extends AppCompatActivity {
         }
         flightState = FlightState.FLYING;
         fuel = fuelCapacity();
-        verticalSpeed = dp(12f + powerLevel * 4f);
+        verticalSpeed = dp(12f + powerLevel * 4f) * FLIGHT_SPEED_MULTIPLIER;
         altitude = 0f;
         autoBoostRemaining = 0.9f;
         incomeTimer = 0f;
@@ -204,12 +227,12 @@ public class RocketLaunch extends AppCompatActivity {
                 && fuel > 0f
                 && (holdingRocket || autoBoostRemaining > 0f);
 
-        float maxUpwardSpeed = dp(76f + speedLevel * 14f);
-        float acceleration = dp(58f + powerLevel * 11f);
-        float gravity = dp(52f);
+        float maxUpwardSpeed = dp(76f + speedLevel * 14f) * FLIGHT_SPEED_MULTIPLIER;
+        float acceleration = dp(58f + powerLevel * 11f) * FLIGHT_SPEED_MULTIPLIER;
+        float gravity = dp(52f) * FALL_SPEED_MULTIPLIER;
         if (thrusting) {
             verticalSpeed = Math.min(maxUpwardSpeed, verticalSpeed + acceleration * dt);
-            fuel = Math.max(0f, fuel - dt);
+            fuel = Math.max(0f, fuel - dt / FUEL_EFFICIENCY_MULTIPLIER);
             if (fuel == 0f) {
                 flightState = FlightState.FALLING;
                 holdingRocket = false;
@@ -242,22 +265,25 @@ public class RocketLaunch extends AppCompatActivity {
     }
 
     private void updateWorldVisuals(boolean thrusting, long frameTimeNanos) {
-        float maxRocketTravel = Math.max(dp(80f), rocketActor.getTop() - dp(78f));
+        float maxRocketTravel = Math.max(
+                flightArea.getHeight() * 0.16f,
+                rocketActor.getTop() - flightArea.getHeight() * 0.12f);
         float rocketTravel = Math.min(altitude, maxRocketTravel);
         rocketActor.setTranslationY(-rocketTravel);
 
-        float spaceProgress = clamp(altitude / dp(260f));
+        float spaceProgress = clamp(altitude / dp(215f));
         spaceBackgroundOne.setAlpha(spaceProgress);
         spaceBackgroundTwo.setAlpha(spaceProgress);
         groundBackground.setAlpha(1f - spaceProgress * 0.92f);
         planet.setAlpha(1f - spaceProgress);
 
-        float groundFade = 1f - clamp(altitude / dp(105f));
+        float groundFade = 1f - clamp(altitude / dp(88f));
         rocketPlatform.setAlpha(groundFade);
         rocketSupport.setAlpha(groundFade);
 
         int backgroundHeight = Math.max(1, spaceBackgroundOne.getHeight());
-        float worldScroll = (Math.max(0f, altitude - maxRocketTravel) * 0.22f)
+        float worldScroll = (Math.max(0f, altitude - maxRocketTravel)
+                * 0.22f * SCENE_SCROLL_MULTIPLIER)
                 % backgroundHeight;
         spaceBackgroundOne.setTranslationY(worldScroll);
         spaceBackgroundTwo.setTranslationY(worldScroll - backgroundHeight);
@@ -300,9 +326,10 @@ public class RocketLaunch extends AppCompatActivity {
         incomePopup.animate().cancel();
         incomePopup.setText(String.format(Locale.US, "+$%d", earned));
         incomePopup.setAlpha(1f);
-        incomePopup.setTranslationY(rocketActor.getTranslationY() - dp(265f));
+        float popupOffset = Math.max(dp(150f), rocketActor.getHeight() * 0.82f);
+        incomePopup.setTranslationY(rocketActor.getTranslationY() - popupOffset);
         incomePopup.animate()
-                .translationY(rocketActor.getTranslationY() - dp(300f))
+                .translationY(rocketActor.getTranslationY() - popupOffset - dp(35f))
                 .alpha(0f)
                 .setDuration(700L)
                 .start();

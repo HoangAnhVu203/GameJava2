@@ -172,40 +172,58 @@
 
         <ImageView
             android:id="@+id/rocketSupport"
-            android:layout_width="185dp"
-            android:layout_height="72dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginBottom="12dp"
             android:contentDescription="@null"
             android:scaleType="fitCenter"
             android:src="@drawable/rocket_support"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="185:72"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_max="185dp"
+            app:layout_constraintWidth_percent="0.49" />
 
         <ImageView
             android:id="@+id/rocketPlatform"
-            android:layout_width="174dp"
-            android:layout_height="63dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginBottom="5dp"
             android:contentDescription="@null"
             android:scaleType="fitCenter"
             android:src="@drawable/rocket_platform"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="174:63"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_max="174dp"
+            app:layout_constraintWidth_percent="0.46" />
 
         <FrameLayout
             android:id="@+id/rocketActor"
-            android:layout_width="176dp"
-            android:layout_height="320dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:background="@null"
             android:clickable="true"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:focusable="true"
             app:layout_constraintBottom_toTopOf="@id/rocketPlatform"
+            app:layout_constraintDimensionRatio="176:320"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintHeight_max="320dp"
+            app:layout_constraintHeight_percent="0.72"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_max="176dp">
+
+            <FrameLayout
+                android:id="@+id/rocketVisual"
+                android:layout_width="176dp"
+                android:layout_height="320dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
             <TextView
                 android:id="@+id/holdLabel"
@@ -250,6 +268,8 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/rocket" />
 
+            </FrameLayout>
+
         </FrameLayout>
 
         <TextView
@@ -269,7 +289,7 @@
 
     <TextView
         android:id="@+id/launchButton"
-        android:layout_width="210dp"
+        android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginBottom="4dp"
         android:background="@drawable/rocket_launch_button"
@@ -282,15 +302,21 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/upgradePanel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="210dp"
+        app:layout_constraintWidth_min="150dp"
+        app:layout_constraintWidth_percent="0.55" />
 
     <FrameLayout
         android:id="@+id/upgradePanel"
         android:layout_width="0dp"
-        android:layout_height="224dp"
+        android:layout_height="0dp"
         android:background="@drawable/rocket_panel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="224dp"
+        app:layout_constraintHeight_min="150dp"
+        app:layout_constraintHeight_percent="0.275"
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
